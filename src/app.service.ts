@@ -1,8 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  getHealthStatus(): object {
+    return {
+      status: HttpStatus.OK,
+      timestamp: new Date().toISOString(),
+      message: 'Wallet Service is healthy',
+    };
   }
 }
