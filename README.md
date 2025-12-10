@@ -141,6 +141,7 @@ docker-compose down -v
 ```
 
 **Services:**
+
 - **Nginx**: Reverse proxy on port 80 (http://localhost)
 - **NestJS App**: Backend service (internal port 3000)
 - **PostgreSQL**: Database (port 5432)
@@ -150,10 +151,12 @@ docker-compose down -v
 ### Swagger UI
 
 Interactive API documentation is available at:
+
 - **With Nginx**: `http://localhost/api/docs`
 - **Direct access**: `http://localhost:3000/api/docs`
 
 The Swagger UI provides:
+
 - 📋 Complete API endpoint documentation
 - 🧪 Interactive API testing (Try it out)
 - 📝 Request/response schemas
@@ -161,6 +164,7 @@ The Swagger UI provides:
 - 💡 Example requests and responses
 
 **Base URLs:**
+
 - With Nginx: `http://localhost/api/v1`
 - Direct: `http://localhost:3000/api/v1`
 
