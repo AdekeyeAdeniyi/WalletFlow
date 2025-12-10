@@ -28,8 +28,8 @@ async function bootstrap() {
     }),
   );
 
-  const apiVersion = process.env.API_VERSION || 'api/v1';
-  app.setGlobalPrefix(apiVersion);
+  // const apiVersion = process.env.API_VERSION || 'api/v1';
+  // app.setGlobalPrefix(apiVersion);
 
   // Swagger configuration
   const config = new DocumentBuilder()
@@ -65,7 +65,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document, {
+  SwaggerModule.setup('docs', app, document, {
     customSiteTitle: 'Wallet Service API Docs',
     customfavIcon: 'https://nestjs.com/img/logo-small.svg',
     customCss: '.swagger-ui .topbar { display: none }',
@@ -73,11 +73,9 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
+  logger.log(`Wallet Service Backend is running on: http://localhost:${port}`);
   logger.log(
-    `Wallet Service Backend is running on: http://localhost:${port}/${apiVersion}`,
-  );
-  logger.log(
-    `Swagger Documentation available at: http://localhost:${port}/api/docs`,
+    `Swagger Documentation available at: http://localhost:${port}/docs`,
   );
 }
 bootstrap();
