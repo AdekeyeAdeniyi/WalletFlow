@@ -36,8 +36,9 @@ RUN pnpm install --prod --frozen-lockfile
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/src/migrations ./src/migrations
-COPY --from=builder /app/src/database ./src/database
+
+# Copy source files needed for migrations (if migrations exist)
+COPY --from=builder /app/src ./src
 
 # Expose port
 EXPOSE 3000
