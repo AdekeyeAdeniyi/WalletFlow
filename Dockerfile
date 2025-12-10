@@ -40,6 +40,10 @@ COPY --from=builder /app/dist ./dist
 # Copy source files needed for migrations (if migrations exist)
 COPY --from=builder /app/src ./src
 
+# Copy TypeScript configuration files for migrations
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/tsconfig.migrations.json ./tsconfig.migrations.json
+
 # Expose port
 EXPOSE 3000
 
