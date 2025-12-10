@@ -25,8 +25,8 @@ services:
       dockerfile: Dockerfile
     container_name: wallet_service
     restart: unless-stopped
-    ports:
-      - '${PORT:-3000}:3000'
+    expose:
+      - '3000'
     environment:
       NODE_ENV: production
       DB_HOST: postgres
@@ -56,8 +56,37 @@ services:
       - wallet_network
     command: sh -c "npm run migration:run && npm run start:prod"
 
+  nginx:
+    image: nginx:alpine
+    container_name: wallet_nginx
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - wallet_service
+    networks:
+      - wallet_network
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'wget',
+          '--quiet',
+          '--tries=1',
+          '--spider',
+          'http://localhost/health',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 volumes:
   postgres_data:
+  nginx_logs:
 
 networks:
   wallet_network:

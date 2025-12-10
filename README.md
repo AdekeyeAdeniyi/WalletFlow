@@ -123,24 +123,35 @@ pnpm run build
 pnpm run start:prod
 ```
 
-### Using Docker Compose (Full Stack)
+### Using Docker Compose (Full Stack with Nginx)
 
 ```bash
-# Start both PostgreSQL and NestJS app
+# Start PostgreSQL, NestJS app, and Nginx
 docker-compose up -d
 
-# View logs
+# View logs for specific service
 docker-compose logs -f wallet_service
+docker-compose logs -f nginx
 
 # Stop services
 docker-compose down
+
+# Stop and remove volumes
+docker-compose down -v
 ```
+
+**Services:**
+- **Nginx**: Reverse proxy on port 80 (http://localhost)
+- **NestJS App**: Backend service (internal port 3000)
+- **PostgreSQL**: Database (port 5432)
 
 ## API Documentation
 
 ### Swagger UI
 
-Interactive API documentation is available at: **`http://localhost:3000/api/docs`**
+Interactive API documentation is available at:
+- **With Nginx**: `http://localhost/api/docs`
+- **Direct access**: `http://localhost:3000/api/docs`
 
 The Swagger UI provides:
 - 📋 Complete API endpoint documentation
@@ -149,7 +160,9 @@ The Swagger UI provides:
 - 🔐 Built-in authentication (JWT and API Key)
 - 💡 Example requests and responses
 
-Base URL: `http://localhost:3000/api/v1`
+**Base URLs:**
+- With Nginx: `http://localhost/api/v1`
+- Direct: `http://localhost:3000/api/v1`
 
 ### Response Format
 
