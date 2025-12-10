@@ -1,97 +1,434 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Wallet Service API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A secure, production-ready wallet service built with NestJS, TypeORM, PostgreSQL, and integrated with Google OAuth and Paystack payment gateway.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- 🔐 **Google OAuth Authentication** - Secure user authentication via Google
+- 💳 **Paystack Integration** - Deposit funds via Paystack payment gateway
+- 💰 **Wallet Management** - Create wallets, check balances, transfer funds
+- 📊 **Transaction History** - Track all wallet transactions with pagination
+- 🔑 **API Key Authentication** - Generate and manage API keys with custom permissions
+- 🛡️ **Security** - JWT tokens, API key validation, role-based access control
+- 📝 **TypeORM Migrations** - Database schema version control
+- 🐳 **Docker Support** - Containerized deployment with Docker Compose
+- ✅ **Input Validation** - Request validation with class-validator
+- 🔄 **Standardized Responses** - Consistent API response format
+- 📚 **Swagger Documentation** - Interactive API documentation with Swagger UI
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **Framework**: NestJS 11
+- **Language**: TypeScript
+- **Database**: PostgreSQL 16
+- **ORM**: TypeORM 0.3.28
+- **Authentication**: Passport + JWT + Google OAuth2
+- **Payment**: Paystack API
+- **Container**: Docker & Docker Compose
 
-```bash
-$ pnpm install
+## Prerequisites
+
+- Node.js 20+
+- pnpm (package manager)
+- Docker & Docker Compose
+- PostgreSQL 16 (if not using Docker)
+- Paystack account (for payment integration)
+- Google OAuth credentials
+
+## Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=wallet_user
+DB_PASSWORD=wallet_password
+DB_NAME=wallet_db
+DB_SYNCHRONIZE=false
+DB_LOGGING=false
+
+# JWT
+JWT_SECRET=your-secure-secret-key-here
+JWT_EXPIRES_IN=1d
+JWT_REFRESH_EXPIRES_IN=7d
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_CALLBACK_URL=http://localhost:3000/api/v1/auth/google/callback
+FRONTEND_DASHBOARD_URL=http://localhost:3001
+
+# Paystack
+PAYSTACK_SECRET_KEY=your-paystack-secret-key
+PAYSTACK_BASE_URL=https://api.paystack.co
+
+# API
+API_KEY_PREFIX=sk_live_
+PORT=3000
+API_VERSION=api/v1
+CORS_ORIGIN=*
 ```
 
-## Compile and run the project
+## Installation
 
 ```bash
-# development
-$ pnpm run start
+# Install dependencies
+pnpm install
 
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your credentials
 ```
 
-## Run tests
+## Database Setup
+
+### Option 1: Using Docker (Recommended)
 
 ```bash
-# unit tests
-$ pnpm run test
+# Start PostgreSQL only
+docker-compose up postgres -d
 
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+# Run migrations
+pnpm run migration:run
 ```
+
+### Option 2: Local PostgreSQL
+
+```bash
+# Create database
+createdb wallet_db
+
+# Run migrations
+pnpm run migration:run
+```
+
+## Running the Application
+
+### Development Mode
+
+```bash
+# Watch mode with hot reload
+pnpm run start:dev
+```
+
+### Production Mode
+
+```bash
+# Build the application
+pnpm run build
+
+# Run production build
+pnpm run start:prod
+```
+
+### Using Docker Compose (Full Stack)
+
+```bash
+# Start both PostgreSQL and NestJS app
+docker-compose up -d
+
+# View logs
+docker-compose logs -f wallet_service
+
+# Stop services
+docker-compose down
+```
+
+## API Documentation
+
+### Swagger UI
+
+Interactive API documentation is available at: **`http://localhost:3000/api/docs`**
+
+The Swagger UI provides:
+- 📋 Complete API endpoint documentation
+- 🧪 Interactive API testing (Try it out)
+- 📝 Request/response schemas
+- 🔐 Built-in authentication (JWT and API Key)
+- 💡 Example requests and responses
+
+Base URL: `http://localhost:3000/api/v1`
+
+### Response Format
+
+All API responses follow this standardized format:
+
+```json
+{
+  "status": true,
+  "message": "Success message",
+  "data": {}
+}
+```
+
+Error responses:
+
+```json
+{
+  "status": false,
+  "message": "Error message",
+  "data": {}
+}
+```
+
+### Authentication Endpoints
+
+#### Google OAuth Login
+
+```
+GET /auth/google
+```
+
+#### Google OAuth Callback
+
+```
+GET /auth/google/callback
+```
+
+### Wallet Endpoints
+
+All wallet endpoints require authentication (JWT token or API key).
+
+#### Get Balance
+
+```http
+GET /wallet/balance
+Authorization: Bearer <jwt_token>
+```
+
+Response:
+
+```json
+{
+  "status": true,
+  "message": "Balance retrieved successfully",
+  "data": {
+    "balance": 5000.0
+  }
+}
+```
+
+#### Initiate Deposit
+
+```http
+POST /wallet/deposit
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "amount": 1000
+}
+```
+
+Response:
+
+```json
+{
+  "status": true,
+  "message": "Deposit initiated successfully",
+  "data": {
+    "reference": "PSK1234567890",
+    "authorization_url": "https://checkout.paystack.com/..."
+  }
+}
+```
+
+#### Transfer Funds
+
+```http
+POST /wallet/transfer
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "wallet_number": "WLT1234567890",
+  "amount": 500
+}
+```
+
+Response:
+
+```json
+{
+  "status": true,
+  "message": "Transfer completed successfully",
+  "data": {
+    "transaction_ref": "TRF1234567890"
+  }
+}
+```
+
+#### Get Transactions
+
+```http
+GET /wallet/transactions?page=1&limit=50
+Authorization: Bearer <jwt_token>
+```
+
+Response:
+
+```json
+{
+  "status": true,
+  "message": "Transactions retrieved successfully",
+  "data": {
+    "transactions": [...],
+    "pagination": {
+      "total": 100,
+      "page": 1,
+      "limit": 50,
+      "pages": 2
+    }
+  }
+}
+```
+
+#### Get Deposit Status
+
+```http
+GET /wallet/deposit/:reference/status
+Authorization: Bearer <jwt_token>
+```
+
+### API Key Endpoints
+
+#### Create API Key
+
+```http
+POST /api-keys/create
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "name": "My API Key",
+  "permissions": ["read", "deposit", "transfer"],
+  "expiresAt": "2025-12-31T23:59:59Z"
+}
+```
+
+#### Get All API Keys
+
+```http
+GET /api-keys
+Authorization: Bearer <jwt_token>
+```
+
+#### Rollover API Key
+
+```http
+POST /api-keys/rollover
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "keyId": "uuid-here"
+}
+```
+
+#### Revoke API Key
+
+```http
+DELETE /api-keys/:id
+Authorization: Bearer <jwt_token>
+```
+
+### Webhook Endpoints
+
+#### Paystack Webhook
+
+```http
+POST /wallet/paystack/webhook
+X-Paystack-Signature: signature-here
+Content-Type: application/json
+```
+
+This endpoint is public and handles Paystack payment confirmations.
+
+## Database Migrations
+
+```bash
+# Generate migration from entity changes
+pnpm run migration:generate src/migrations/MigrationName
+
+# Create empty migration file
+pnpm run migration:create src/migrations/MigrationName
+
+# Run pending migrations
+pnpm run migration:run
+
+# Revert last migration
+pnpm run migration:revert
+```
+
+## Authentication Methods
+
+### 1. JWT Token (User Authentication)
+
+After Google OAuth login, you receive an access token:
+
+```http
+Authorization: Bearer <jwt_token>
+```
+
+### 2. API Key (Service Authentication)
+
+Use generated API keys for service-to-service communication:
+
+```http
+X-API-Key: sk_live_your_api_key_here
+```
+
+### 3. Combined Authentication
+
+Some endpoints support both methods. The guard checks for API key first, then JWT.
+
+## Project Structure
+
+```
+src/
+├── api-keys/          # API key management
+├── auth/              # Authentication & authorization
+├── common/            # Shared modules (guards, filters, decorators)
+├── database/          # Database configuration
+├── entities/          # TypeORM entities
+├── migrations/        # Database migrations
+├── paystack/          # Paystack integration
+├── user/              # User management
+├── wallets/           # Wallet operations
+└── main.ts            # Application entry point
+```
+
+## Security Features
+
+- 🔐 JWT token authentication with refresh tokens
+- 🔑 API key authentication with permissions
+- 🛡️ Request validation and sanitization
+- 🚫 Rate limiting ready
+- 🔒 CORS configuration
+- 📝 Audit logging via transactions
+- 💳 Webhook signature verification
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Docker Production Deployment
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+# Build and start with production settings
+docker-compose up -d
+
+# Scale the application (if needed)
+docker-compose up -d --scale wallet_service=3
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Environment Considerations
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Set `DB_SYNCHRONIZE=false` in production
+- Use strong `JWT_SECRET` (64+ characters)
+- Configure proper `CORS_ORIGIN`
+- Set up SSL/TLS certificates
+- Use environment-specific `.env` files
 
 ## License
 

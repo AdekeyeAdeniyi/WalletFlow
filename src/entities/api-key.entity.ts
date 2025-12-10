@@ -70,7 +70,10 @@ export class ApiKey {
 
   @BeforeInsert()
   setKeyPrefix() {
-    if (!this.key.startsWith(process.env.API_KEY_PREFIX || 'sk_live_')) {
+    if (
+      this.key &&
+      !this.key.startsWith(process.env.API_KEY_PREFIX || 'sk_live_')
+    ) {
       this.key = (process.env.API_KEY_PREFIX || 'sk_live_') + this.key;
     }
   }
